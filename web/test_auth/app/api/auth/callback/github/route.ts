@@ -15,12 +15,15 @@ export async function GET(req: NextRequest){
 
     try{
         const oauth_config = {
-            code,
+            authorization_code:code,
             state
         }
         const resp = await fetch("http://localhost:3210/token",{
             method: "POST",
-            body: JSON.stringify(oauth_config)
+            body: JSON.stringify(oauth_config),
+            headers: {
+                "Content-Type": "application/json"
+            }
         })
         if(resp !== undefined){
             const { access_token, refresh_token} = await resp.json();

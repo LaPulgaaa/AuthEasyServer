@@ -4,7 +4,7 @@ import { OAuthClient } from "@lapulga_28/auth_easy";
 const router = express.Router();
 
 type CallbackReqBody = {
-    code: string,
+    authorization_code: string,
     state: string,
 }
 
@@ -13,10 +13,9 @@ router.post("/",async(req,res) => {
 
     try{
         const resp = await OAuthClient.get_instance().handle_callback({
-            authorization_code: body.code,
+            authorization_code: body.authorization_code,
             state: body.state
         });
-
         if(resp !== undefined){
             res.json({
                 message: 'SUCCESS',

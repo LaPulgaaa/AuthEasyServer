@@ -1,9 +1,10 @@
+import { NextApiResponse } from "next";
 import { cookies } from "next/headers";
+import { permanentRedirect } from "next/navigation";
 
-import { redirect } from "next/navigation";
-import { NextRequest } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
-export async function GET(req: NextRequest){
+export async function GET(req: NextRequest,res: NextApiResponse){
     
     const code = req.nextUrl.searchParams.get("code");
     const state = req.nextUrl.searchParams.get("state");
@@ -24,17 +25,17 @@ export async function GET(req: NextRequest){
             headers: {
                 "Content-Type": "application/json"
             }
-        })
+        });
+
         if(resp !== undefined){
-            const { access_token, refresh_token} = await resp.json();
-            console.log("Access token "+access_token);
-            cookie_store.set("access_token",access_token);
-            cookie_store.set("refresh_token",refresh_token);
+            const { data } = await resp.json();
+            cookie_store.set("access_token",data.access_token);
+            return NextResponse.redirect("http://localhost:3000/home",{status: 307});
         }
 
-        redirect("localhost:3000")
+        return NextResponse.redirect("http://localhost:3000/",{status: 307});
+        
     }catch(err){
         console.log(err);
-        redirect("localhost:3000")
     }
 }

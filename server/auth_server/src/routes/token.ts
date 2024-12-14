@@ -1,5 +1,5 @@
 import express from "express";
-import { OAuthClient } from "@lapulga_28/auth_easy";
+import { OAuthClient } from "../auth_easy_src";
 
 const router = express.Router();
 
@@ -16,11 +16,13 @@ router.post("/",async(req,res) => {
             authorization_code: body.authorization_code,
             state: body.state
         });
+        console.log(resp);
         if(resp !== undefined){
             res.json({
                 message: 'SUCCESS',
                 data: resp
             }).status(201);
+            return;
         }
         res.json({
             message: "COULD NOT FETCH ACCESS_TOKEN"

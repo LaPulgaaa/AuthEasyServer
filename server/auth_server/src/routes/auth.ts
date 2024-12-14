@@ -1,6 +1,6 @@
 import express from "express";
-import { OAuthClient } from "@lapulga_28/auth_easy";
-import type { OAuthClientConfigParams } from "@lapulga_28/auth_easy/dist/types";
+import { OAuthClient } from "../auth_easy_src";
+import { OAuthClientConfigParams } from "../auth_easy_src/types";
 import { GITHUB_OAUTH_CONFIG } from "../const/github";
 const router = express.Router();
 
@@ -11,6 +11,7 @@ type OAuthInitReqBody = {
     organisation?: string,
     audience?: string,
     redirect_uri: string,
+    scope?: string,
 }
 
 type CallbackReqBody = {
@@ -23,6 +24,7 @@ router.post("/",async(req,res) => {
 
     try{
         const connection = body.provider;
+        console.log(body.scope)
         if(connection === "github"){
             const oauth_client:OAuthClientConfigParams = {
                 ...GITHUB_OAUTH_CONFIG,
@@ -30,9 +32,11 @@ router.post("/",async(req,res) => {
                 client_secret: body.client_secret,
                 connection: "github",
                 organisation: body.audience,
-                redirect_uri: body.redirect_uri
+                redirect_uri: body.redirect_uri,
+                scope: body.scope,
             }
             const resp = await OAuthClient.get_instance(oauth_client).start_auth_flow();
+            console.log(resp);
             res.json({
                 message: "SUCCESS",
                 auth_url: resp,
